@@ -44,17 +44,24 @@ namespace Aplicación.Logica.Cliente
 
             public async Task<Unit> Handle(EjecutaCliente request, CancellationToken cancellationToken)
             {
-                var parametroNombre = new SqlParameter("@nombre", request.nombre);
-                var parametroApellido = new SqlParameter("@apellido", request.apellido);
-                var parametroCorreo = new SqlParameter("@correo", request.correo);
-                var parametroMatricula = new SqlParameter("@matricula", request.matricula);
-                var resultado = await _context.Database.ExecuteSqlRawAsync("EXEC spClienteCrear @nombre, @apellido, @correo, @matricula", parametroNombre, parametroApellido, parametroCorreo, parametroMatricula);
+                var clientes = new Clientes {
+
+                    id = Guid.NewGuid(),
+                    nombre = request.nombre,
+                    apellido = request.apellido,
+                    correo = request.correo,
+                    matricula = request.matricula
+
+                
+                };
+                _context.Clientes.Add(clientes);
+                var resultado = await _context.SaveChangesAsync();
 
                 if (resultado > 0)
                 {
                     return Unit.Value;
                 }
-                throw new Exception("No se pudo insertar la editorial");
+                throw new Exception("No se pudo insertar el cliente");
             }
         }
     }

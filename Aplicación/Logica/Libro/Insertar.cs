@@ -52,17 +52,22 @@ namespace Aplicación.Logica.Libro
 
             public async Task<Unit> Handle(EjecutaLibro request, CancellationToken cancellationToken)
             {
-                var parametroNombre = new SqlParameter("@nombre", request.nombre);
-                var parametroPaginas = new SqlParameter("@paginas", request.paginas);
-                var parametroDescripcion = new SqlParameter("@descripcion", request.descripcion);
-                var parametroEdicion = new SqlParameter("@edicion", request.edicion);
-                var parametrofecha_publicacion = new SqlParameter("@fecha_publicacion", request.fecha_publicacion);
-                var parametroAutorId = new SqlParameter("@autor_id", request.autor_id);
-                var parametroCategoria_id = new SqlParameter("@categoria_id", request.categoria_id);
-                var parametroEditorial_id = new SqlParameter("@editorial_id", request.editorial_id);
+                var libro = new Libros { 
+                id = Guid.NewGuid(),
+                nombre = request.nombre,
+                paginas = request.paginas,
+                descripcion = request.descripcion,
+                edicion = request.edicion,
+                fecha_publicacion = request.fecha_publicacion,
+                autor_id = request.autor_id,
+                categoria_id = request.categoria_id,
+                editorial_id = request.editorial_id,
+                
+                };
 
-                var resultado = await _context.Database.ExecuteSqlRawAsync("EXEC spLibroCrear @nombre, @paginas, @descripcion, @edicion,@fecha_publicacion, @autor_id, @categoria_id, @editorial_id", parametroNombre,parametroPaginas, parametroDescripcion, parametroEdicion, parametrofecha_publicacion, parametroAutorId, parametroCategoria_id, parametroEditorial_id  );
+                _context.Libros.Add(libro);
 
+                var resultado = await _context.SaveChangesAsync();
                 if (resultado > 0)
                 {
                     return Unit.Value;

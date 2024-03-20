@@ -38,8 +38,14 @@ namespace Aplicación.Logica.Categoria
 
             public async Task<Unit> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-               var parametroNombre = new SqlParameter("@nombre", request.Nombre);
-                var resultado = await _context.Database.ExecuteSqlRawAsync("EXEC spCategoriaCrear @nombre", parametroNombre);
+                var categoria = new Categorias
+                {
+                    id = Guid.NewGuid(),
+                    nombre = request.Nombre
+                };
+                _context.Categorias.Add(categoria);
+                var resultado = await _context.SaveChangesAsync();
+
                 if (resultado > 0)
                 {
                     return Unit.Value;

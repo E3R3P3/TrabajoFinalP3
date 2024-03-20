@@ -37,8 +37,14 @@ namespace Aplicación.Logica.Editora
 
             public async Task<Unit> Handle(EjecutaEditorial request, CancellationToken cancellationToken)
             {
-                var parametroNombre = new SqlParameter("@nombre", request.nombre);
-                var resultado = await _context.Database.ExecuteSqlRawAsync("EXEC spEditoraCrear @nombre", parametroNombre);
+                var editora = new Editorial { 
+                    id = Guid.NewGuid(),
+                    nombre = request.nombre,
+                
+                };
+                _context.Editorial.Add(editora);
+                var resultado = await _context.SaveChangesAsync();
+
 
                 if (resultado > 0)
                 {

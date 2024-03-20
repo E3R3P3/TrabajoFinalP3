@@ -43,12 +43,19 @@ namespace Aplicación.Logica.Autor
 
             public async Task<Unit> Handle(EjecutaAutor request, CancellationToken cancellationToken)
             {
-                var parametroNombre = new SqlParameter("@nombre", request.nombre);
-                var parametroApellido = new SqlParameter("@apellido", request.apellido);
-                var parametroPais = new SqlParameter("@pais", request.pais);
-                var parametroDescripcion = new SqlParameter("@descripcion", request.descripcion);
+                var autores = new Autores
+                {
+                    id = Guid.NewGuid(),
+                    nombre = request.nombre,
+                    apellido = request.apellido,
+                    pais = request.pais,
+                    descripcion = request.descripcion
+                    
 
-                var resultado = await _context.Database.ExecuteSqlRawAsync("EXEC spAutorCrear @nombre, @apellido, @pais, @descripcion", parametroNombre, parametroApellido, parametroPais, parametroDescripcion);
+                };
+                _context.Autores.Add(autores);
+                var resultado = await _context.SaveChangesAsync();
+
 
                 if (resultado > 0)
                 {
